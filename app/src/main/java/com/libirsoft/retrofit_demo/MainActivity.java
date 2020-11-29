@@ -1,6 +1,8 @@
 package com.libirsoft.retrofit_demo;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,26 +19,43 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textresult;
     Retrofit retrofit;
+    JsonPlaceHolderApi js;
+    Button postbtn, commentbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        postbtn = findViewById(R.id.post_btn);
+        commentbtn = findViewById(R.id.comment_btn);
         textresult = findViewById(R.id.result);
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://jsonplaceholder.typicode.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        // our connection here
+        buildretrofit();
 
-        getJson();
+        postbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textresult.setText("");
+                //this method showing only https://jsonplaceholder.typicode.com/posts
+                showPosts();
+            }
+        });
+
+        commentbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textresult.setText("");
+                // this method showing only https://jsonplaceholder.typicode.com/posts/1/comments
+                showComments();
+            }
+        });
 
 
     }
 
-    void getJson() {
+    void showPosts() {
 
-        JsonPlaceHolderApi js = retrofit.create(JsonPlaceHolderApi.class);
+        js = retrofit.create(JsonPlaceHolderApi.class);
         Call<List<Post>> call = js.getPosts();
         call.enqueue(new Callback<List<Post>>() {
             @Override
@@ -44,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!response.isSuccessful()) {
 
-                    textresult.setText("Cade: " + response.code());
+                    textresult.setText("response denied : " + response.code());
+                    return;
 
                 }
                 List<Post> posts = response.body();
@@ -56,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     content += "Text: " + post.getText() + "\n\n";
                     textresult.append(content);
                 }
+
             }
 
             @Override
@@ -66,5 +87,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    void showComments() {
+        js = retrofit.create(JsonPlaceHolderApi.class);
+        //i an giving value to id . You can do this with editbox or somthing else
+        Call<List<Comment>> call = js.getComments(3);
+
+        call.enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+
+                if (!response.isSuccessful()) {
+
+                    textresult.setText("response denied : " + response.code());
+                    return;
+
+                }
+                List<Comment> comments = response.body();
+
+                for (Comment comment : comments) {
+
+                    String content = "";
+                    content += "Post ID: " + comment.getPostId() + "\n";
+                    content += " ID: " + comment.getId() + "\n";
+                    content += "Email : " + comment.getEmail() + "\n";
+                    content += "Name : " + comment.getName() + "\n";
+                    content += "Text: " + comment.getText() + "\n\n";
+                    textresult.append(content);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+
+                textresult.setText(t.getMessage());
+            }
+        });
+
+
+    }
+
+    public void buildretrofit() {
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://jsonplaceholder.typicode.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 }

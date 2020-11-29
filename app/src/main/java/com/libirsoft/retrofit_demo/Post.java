@@ -1,7 +1,7 @@
 package com.libirsoft.retrofit_demo;
 
 import com.google.gson.annotations.SerializedName;
-
+// // i am using post class for getting data integrated
 public class Post {
     private int id;
     private int userId;

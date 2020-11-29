@@ -4,8 +4,15 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface JsonPlaceHolderApi {
+    // for getting https://jsonplaceholder.typicode.com/posts
     @GET("posts")
     Call<List<Post>> getPosts();
+   // for getting https://jsonplaceholder.typicode.com/posts/1/comments id is user comments what we want to show
+    @GET("posts/{id}/comments")
+    Call<List<Comment>> getComments(@Path("id") int postId);
+
+
 }
