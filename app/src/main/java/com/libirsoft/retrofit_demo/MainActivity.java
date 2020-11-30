@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     void showPosts() {
 
         js = retrofit.create(JsonPlaceHolderApi.class);
-        Call<List<Post>> call = js.getPosts();
+        Call<List<Post>> call = js.getPosts(4);
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
