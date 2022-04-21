@@ -1,2 +1,2 @@
 # RetrofitRestApi
- This is my simple Rest api for android studio by using retrofit 2
+ This is my simple project with retrofit 2 libary
